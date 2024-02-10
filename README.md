@@ -38,7 +38,7 @@ To get started, you'll need to install the **Criterion** library. You can find d
     
 3. **Run the Executable**:
     
-    Now, you can run the executable to execute the test cases. For a detailed and descriptive report, use the **`--verbose`** flag:
+    Now, you can run the executable to execute the test cases. For a detailed and descriptive report, use the `--verbose` flag:
     
     ```bash
     tests/bin/test_arraylist --verbose
