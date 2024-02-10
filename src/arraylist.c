@@ -46,6 +46,7 @@ void arraylist_free(ArrayList *arraylist)
     }
 }
 
+// Resize the arraylist to double its current capacity
 static bool arraylist_resize(ArrayList *arraylist)
 {
     size_t new_capacity = arraylist->capacity * 2;
@@ -140,6 +141,56 @@ ssize_t arraylist_index_of(ArrayList *list, ArrayListEqualFunc cb, ArrayListItem
     }
 
     return -1;
+}
+
+static void quick_sort(ArrayListItem *start, size_t length, ArrayListCompareFunc compare_func)
+{
+
+    if (start == NULL || compare_func == NULL)
+    {
+        return;
+    }
+
+    // If the array is empty or has only one element, it is already sorted
+    if (length <= 1)
+    {
+        return;
+    }
+
+    ArrayListItem pivot;
+    ArrayListItem temp;
+
+    // Set the pivot to the last element in the array
+    pivot = start[length - 1];
+
+    int i = -1;
+    int j = 0;
+
+    // Partition the array
+    while (j < length)
+    {
+        if (compare_func(start[j], pivot) <= 0)
+        {
+            temp = start[j];
+            i++;
+            start[j] = start[i];
+            start[i] = temp;
+        }
+        j++;
+    }
+
+    size_t left_partition_length = i;
+    size_t right_partition_length = length - i - 1;
+
+    // Recursively sort the two partitions
+    quick_sort(start, left_partition_length, compare_func);
+    quick_sort(start + i + 1, right_partition_length, compare_func);
+}
+
+void arraylist_sort(ArrayList *list, ArrayListCompareFunc compare_func)
+{
+
+    quick_sort(list->items, list->size, compare_func);
 }
 
 void arraylist_clear(ArrayList *list)

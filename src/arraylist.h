@@ -50,14 +50,6 @@ ArrayList *arraylist_new(size_t capacity);
 void arraylist_free(ArrayList *list);
 
 /**
- * @brief Resizes the ArrayList to double its current capacity.
- *
- * @param arraylist The ArrayList to be resized.
- * @return bool Returns true if the resize operation is successful, false otherwise.
- */
-static bool arraylist_resize(ArrayList *arraylist);
-
-/**
  * @brief Inserts an item at the specified index in the ArrayList.
  *
  * @param list The ArrayList in which to insert the item.
