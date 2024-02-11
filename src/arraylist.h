@@ -83,18 +83,20 @@ bool arraylist_append(ArrayList *list, ArrayListItem data);
  * @param list The ArrayList from which to remove the items.
  * @param start The starting index of the range to be removed.
  * @param end The ending index of the range to be removed.
+ * @param should_free A boolean indicating whether the removed items should be freed.
  * @return bool Returns true if the items are successfully removed, false otherwise.
  */
-bool arraylist_remove_range(ArrayList *list, size_t start, size_t end);
+bool arraylist_remove_range(ArrayList *list, size_t start, size_t end, bool should_free);
 
 /**
  * @brief Removes an item at the specified index from the ArrayList.
  *
  * @param list The ArrayList from which to remove the item.
  * @param index The index of the item to be removed.
+ * @param should_free A boolean indicating whether the removed item should be freed.
  * @return bool Returns true if the item is successfully removed, false otherwise.
  */
-bool arraylist_remove(ArrayList *list, size_t index);
+bool arraylist_remove(ArrayList *list, size_t index, bool should_free);
 
 /**
  * @brief Returns the index of the first occurrence of the specified item in the ArrayList.

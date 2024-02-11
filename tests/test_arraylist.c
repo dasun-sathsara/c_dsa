@@ -46,10 +46,42 @@ Test(arraylist, test_arraylist_remove, .description = "Test removing items from 
     arraylist_append(list, &a);
     arraylist_append(list, &b);
 
-    arraylist_remove(list, 0);
+    arraylist_remove(list, 0, false);
     cr_assert_eq(list->size, 1);
     cr_assert_eq(list->capacity, 10);
     cr_assert_eq(*(int *)list->items[0], b);
+
+    arraylist_free(list);
+}
+
+Test(arraylist, test_arraylist_remove_heap, .description = "Test removing heap allocated items from an ArrayList")
+{
+    ArrayList *list = arraylist_new(10);
+
+    for (int i = 0; i < 10; i++)
+    {
+        int *a = malloc(sizeof(int));
+        *a = i;
+        arraylist_append(list, a);
+    }
+
+    // Assert that first item is 0
+    cr_assert_eq(*(int *)list->items[0], 0);
+
+    // Assert that last item is 9
+    cr_assert_eq(*(int *)list->items[9], 9);
+
+    // Remove a range of items
+    arraylist_remove_range(list, 0, 5, true);
+
+    // Assert that first item is 5
+    cr_assert_eq(*(int *)list->items[0], 5);
+
+    // Remove last item
+    arraylist_remove(list, list->size - 1, true);
+
+    // Assert that last item is 8
+    cr_assert_eq(*(int *)list->items[list->size - 1], 8);
 
     arraylist_free(list);
 }

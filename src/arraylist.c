@@ -100,7 +100,7 @@ bool arraylist_prepend(ArrayList *list, ArrayListItem data)
     return arraylist_insert(list, 0, data);
 }
 
-bool arraylist_remove_range(ArrayList *list, size_t start, size_t end)
+bool arraylist_remove_range(ArrayList *list, size_t start, size_t end, bool should_free)
 {
 
     // Check if start and end are out of bounds
@@ -110,6 +110,19 @@ bool arraylist_remove_range(ArrayList *list, size_t start, size_t end)
         return false;
     }
 
+    // Free the items if should_free is true
+    if (should_free)
+    {
+        for (size_t i = start; i < end; i++)
+        {
+            if (list->items[i] != NULL)
+            {
+                free(list->items[i]);
+                list->items[i] = NULL;
+            }
+        }
+    }
+
     // Move the items after the range to the start of the range
     memmove(&list->items[start], &list->items[end], (list->size - end) * sizeof(ArrayListItem));
     list->size -= (end - start);
@@ -117,9 +130,9 @@ bool arraylist_remove_range(ArrayList *list, size_t start, size_t end)
     return true;
 }
 
-bool arraylist_remove(ArrayList *list, size_t index)
+bool arraylist_remove(ArrayList *list, size_t index, bool should_free)
 {
-    return arraylist_remove_range(list, index, index + 1);
+    return arraylist_remove_range(list, index, index + 1, should_free);
 }
 
 ssize_t arraylist_index_of(ArrayList *list, ArrayListEqualFunc cb, ArrayListItem data)
