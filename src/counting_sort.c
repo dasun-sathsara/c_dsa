@@ -2,7 +2,7 @@
 
 #include "counting_sort.h"
 
-int countingSort(int *array, size_t arrLength, int *ordering, size_t orderingLength)
+int counting_sort(int *array, size_t arrLength, int *ordering, size_t orderingLength)
 {
     // Create a frequency table
     int frequencyTable[orderingLength];

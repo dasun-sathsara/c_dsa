@@ -6,4 +6,4 @@
  * @param arr The array to be sorted.
  * @param length The length of the array.
  */
-int selectionSort(int *arr, size_t length);
+int selection_sort(int *arr, size_t length);

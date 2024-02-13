@@ -2,7 +2,7 @@
 
 #include "bubble_sort.h"
 
-int bubbleSort(int *arr, size_t length)
+int bubble_sort(int *arr, size_t length)
 {
     int swapped;
     for (size_t i = 0; i < length - 1; i++)

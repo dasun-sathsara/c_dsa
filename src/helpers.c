@@ -2,7 +2,7 @@
 
 #include "helpers.h"
 
-void printIntegerArray(int *arr, size_t length)
+void print_integer_array(int *arr, size_t length)
 {
     for (size_t i = 0; i < length; i++)
     {

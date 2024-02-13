@@ -1,8 +1,9 @@
 #include <stdio.h>
 
+#include "arraylist.h"
 #include "merge_sort.h"
 
-int mergeSort(int *array, size_t arrLength)
+int merge_sort(int *array, size_t arrLength)
 {
     return 0;
 }

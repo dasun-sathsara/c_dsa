@@ -6,4 +6,4 @@
  * @param arr The integer array to be printed.
  * @param length The length of the array.
  */
-void printIntegerArray(int *arr, size_t length);
+void print_integer_array(int *arr, size_t length);

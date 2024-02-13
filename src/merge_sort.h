@@ -7,4 +7,4 @@
  * @param arrLength The length of the array.
  * @return int Returns 0 on success.
  */
-int mergeSort(int *array, size_t arrLength);
+int merge_sort(int *array, size_t arrLength);

@@ -2,7 +2,7 @@
 
 #include "selection_sort.h"
 
-int selectionSort(int *arr, size_t length)
+int selection_sort(int *arr, size_t length)
 {
     for (size_t i = 0; i < length; i++)
     {

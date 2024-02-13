@@ -8,4 +8,4 @@
  * @param ordering The ordering array used to determine the order of elements.
  * @param orderingLength The length of the ordering array.
  */
-int countingSort(int *array, size_t arrLength, int *ordering, size_t orderingLength);
+int counting_sort(int *array, size_t arrLength, int *ordering, size_t orderingLength);

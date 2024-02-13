@@ -6,4 +6,4 @@
  * @param arr The array to be sorted.
  * @param length The length of the array.
  */
-int bubbleSort(int *arr, size_t length);
+int bubble_sort(int *arr, size_t length);
