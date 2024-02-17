@@ -128,7 +128,7 @@ void print_dll_int(DoublyLinkedList *list)
     printf("------------------\n");
 }
 
-Test(doubly_linked_list_search, test_doubly_linked_list_search,
+Test(doubly_linked_list_find, test_doubly_linked_list_find,
      .description = "Test searching for a node in a doubly linked list.")
 {
     DoublyLinkedList *list = doubly_linked_list_new();
@@ -150,8 +150,12 @@ Test(doubly_linked_list_search, test_doubly_linked_list_search,
     }
 
     int a = 9;
-    bool r = doubly_linked_list_search(list, &a, int_equal);
-    cr_assert_eq(r, true, "doubly_linked_list_search() failed");
+    Node *r = doubly_linked_list_find(list, &a, int_equal);
+    cr_assert_not_null(r, "doubly_linked_list_find() failed");
+
+    int b = 11;
+    r = doubly_linked_list_find(list, &b, int_equal);
+    cr_assert_null(r, "doubly_linked_list_find() failed");
 
     doubly_linked_list_free(&list, true);
 }
@@ -162,32 +166,27 @@ Test(doubly_linked_list_remove, test_doubly_linked_list_remove,
     DoublyLinkedList *list = doubly_linked_list_new();
     cr_assert_not_null(list, "doubly_linked_list_new() failed");
 
-    int a = 1;
-    int b = 2;
+    for (int i = 0; i < 10; i++)
+    {
+        int *a = malloc(sizeof(int));
+        *a = i;
 
-    int r = doubly_linked_list_remove(list, &a, int_equal, false);
-    cr_assert_eq(r, false, "doubly_linked_list_remove() failed");
+        if (i % 2 == 0)
+        {
+            doubly_linked_list_prepend(list, a);
+        }
+        else
+        {
+            doubly_linked_list_append(list, a);
+        }
+    }
 
-    doubly_linked_list_append(list, &a);
-    r = doubly_linked_list_remove(list, &a, int_equal, false);
-    cr_assert_eq(r, true, "doubly_linked_list_remove() failed");
+    int a = 9;
+    Node *r = doubly_linked_list_find(list, &a, int_equal);
+    cr_assert_not_null(r, "doubly_linked_list_find() failed");
 
-    int c = 4;
-    doubly_linked_list_append(list, &b);
-    doubly_linked_list_append(list, &c);
-    r = doubly_linked_list_remove(list, &b, int_equal, false);
-    cr_assert_eq(r, true, "doubly_linked_list_remove() failed");
+    doubly_linked_list_remove(list, r, true);
+    cr_assert_eq(list->size, 9, "doubly_linked_list_remove() failed");
 
-    int d = 23, e = 24, f = 25;
-    doubly_linked_list_append(list, &d);
-    doubly_linked_list_append(list, &e);
-    doubly_linked_list_append(list, &f);
-
-    int j = doubly_linked_list_search(list, &f, int_equal);
-    cr_assert_eq(j, true, "doubly_linked_list_search() failed");
-    doubly_linked_list_remove(list, &f, int_equal, false);
-    j = doubly_linked_list_search(list, &f, int_equal);
-    cr_assert_eq(j, false, "doubly_linked_list_search() failed");
-
-    doubly_linked_list_free(&list, false);
+    doubly_linked_list_free(&list, true);
 }

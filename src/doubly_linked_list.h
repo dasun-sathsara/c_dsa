@@ -16,9 +16,6 @@ struct _DoublyLinkedList
     size_t size;
 };
 
-// Represents a null Node
-#define NULL_NODE ((Node *)0)
-
 /*
 @brief Structure of a node in a doubly linked list
 */
@@ -81,22 +78,22 @@ bool doubly_linked_list_prepend(DoublyLinkedList *list, NodeData data);
 bool doubly_linked_list_append(DoublyLinkedList *list, NodeData data);
 
 /**
- * Searches for a node with the specified data in the given doubly linked list.
+ * @brief Finds a node with the specified data in the given doubly linked list.
  *
  * @param list The doubly linked list to search in.
  * @param data The data to search for.
- * @param equal_func The function used to compare the data.
- * @return true if a node with the specified data is found, false otherwise.
+ * @param equal_func The function used to compare the data for equality.
+ * @return A pointer to the found node, or NULL if the node is not found.
  */
-bool doubly_linked_list_search(DoublyLinkedList *list, NodeData data, EqualFunction equal_func);
 
-/*
-@brief Removes the first occurrence of the specified data from the doubly linked list.
+Node *doubly_linked_list_find(DoublyLinkedList *list, NodeData data, EqualFunction equal_func);
 
-@param list The doubly linked list to remove from.
-@param data The data to remove.
-@param equal_func The function used to compare the data.
-@param free_data A boolean to free the data of the nodes.
-@return true if the data was removed, false otherwise.
-*/
-bool doubly_linked_list_remove(DoublyLinkedList *list, NodeData data, EqualFunction equal_func, bool free_data);
+/**
+ * @brief Removes a node from the doubly linked list.
+ *
+ * @param list The doubly linked list from which to remove the node.
+ * @param node The node to be removed from the list.
+ * @param free_data A boolean value indicating whether to free the memory occupied by the removed node's data.
+ * @return `true` if the node was successfully removed, `false` otherwise.
+ */
+bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_data);

@@ -124,7 +124,7 @@ bool doubly_linked_list_append(DoublyLinkedList *list, NodeData data)
     return true;
 }
 
-static Node *doubly_linked_list_find_node(DoublyLinkedList *list, NodeData data, EqualFunction equal_func)
+Node *doubly_linked_list_find(DoublyLinkedList *list, NodeData data, EqualFunction equal_func)
 {
     if (list == NULL)
     {
@@ -146,25 +146,11 @@ static Node *doubly_linked_list_find_node(DoublyLinkedList *list, NodeData data,
     return NULL;
 }
 
-bool doubly_linked_list_search(DoublyLinkedList *list, NodeData data, EqualFunction equal_func)
-{
-    return doubly_linked_list_find_node(list, data, equal_func) != NULL;
-}
-
-bool doubly_linked_list_remove(DoublyLinkedList *list, NodeData data, EqualFunction equal_func, bool free_data)
+bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_data)
 {
     if (list == NULL)
     {
         perror("List is NULL");
-        return false;
-    }
-
-    Node *node = doubly_linked_list_find_node(list, data, equal_func);
-
-
-    // Node not found
-    if (node == NULL)
-    {
         return false;
     }
 
