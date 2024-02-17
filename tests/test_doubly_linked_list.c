@@ -190,3 +190,57 @@ Test(doubly_linked_list_remove, test_doubly_linked_list_remove,
 
     doubly_linked_list_free(&list, true);
 }
+
+Test(doubly_linked_list_insert_before, test_doubly_linked_list_insert_before,
+     .description = "Test inserting a node before another node in a doubly linked list.")
+{
+    DoublyLinkedList *list = doubly_linked_list_new();
+    cr_assert_not_null(list, "doubly_linked_list_new() failed");
+
+    for (int i = 0; i < 10; i++)
+    {
+        int *a = malloc(sizeof(int));
+        *a = i;
+
+        doubly_linked_list_append(list, a);
+    }
+
+    int a = 9;
+    Node *r = doubly_linked_list_find(list, &a, int_equal);
+    cr_assert_not_null(r, "doubly_linked_list_find() failed");
+
+    int *b = malloc(sizeof(int));
+    *b = 11;
+    doubly_linked_list_insert_before(list, r, b);
+    cr_assert_eq(list->size, 11, "doubly_linked_list_insert_before() failed");
+    cr_assert_eq(list->tail->prev->data, b, "doubly_linked_list_insert_before() failed");
+
+    doubly_linked_list_free(&list, true);
+}
+
+Test(doubly_linked_list_insert_after, test_doubly_linked_list_insert_after,
+     .description = "Test inserting a node after another node in a doubly linked list.")
+{
+    DoublyLinkedList *list = doubly_linked_list_new();
+    cr_assert_not_null(list, "doubly_linked_list_new() failed");
+
+    for (int i = 0; i < 10; i++)
+    {
+        int *a = malloc(sizeof(int));
+        *a = i;
+
+        doubly_linked_list_append(list, a);
+    }
+
+    int a = 5;
+    Node *r = doubly_linked_list_find(list, &a, int_equal);
+    cr_assert_not_null(r, "doubly_linked_list_find() failed");
+
+    int *b = malloc(sizeof(int));
+    *b = 51;
+    doubly_linked_list_insert_after(list, r, b);
+    cr_assert_eq(list->size, 11, "doubly_linked_list_insert_after() failed");
+    cr_assert_eq(r->next->data, b, "doubly_linked_list_insert_after() failed");
+
+    doubly_linked_list_free(&list, true);
+}
