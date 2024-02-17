@@ -4,6 +4,19 @@
 
 int counting_sort(int *array, size_t arrLength, int *ordering, size_t orderingLength)
 {
+
+    // Exit if the array is NULL
+    if (array == NULL)
+    {
+        return -1;
+    }
+
+    // If the array is empty or has only one element, it is already sorted
+    if (arrLength <= 1)
+    {
+        return 0;
+    }
+
     // Create a frequency table
     int frequencyTable[orderingLength];
 
