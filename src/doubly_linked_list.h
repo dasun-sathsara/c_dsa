@@ -4,6 +4,7 @@
 
 typedef void *NodeData;
 typedef struct _DoublyLinkedList DoublyLinkedList;
+typedef struct _DoublyLinkedListIterator DoublyLinkedListIterator;
 typedef struct _Node Node;
 
 /*
@@ -24,6 +25,15 @@ struct _Node
     NodeData data;
     struct _Node *prev;
     struct _Node *next;
+};
+
+/*
+@brief Structure of a doubly linked list iterator
+*/
+struct _DoublyLinkedListIterator
+{
+    DoublyLinkedList *list;
+    Node *current;
 };
 
 /**
@@ -118,3 +128,40 @@ bool doubly_linked_list_insert_before(DoublyLinkedList *list, Node *node, NodeDa
  */
 bool doubly_linked_list_insert_after(DoublyLinkedList *list, Node *node, NodeData data);
 
+/**
+ * @brief Creates a new iterator for a doubly linked list and initializes it to the beginning of the list.
+ *
+ * @param list The doubly linked list to create an iterator for.
+ * @return A pointer to the newly created iterator.
+ */
+DoublyLinkedListIterator *doubly_linked_list_iterator(DoublyLinkedList *list);
+
+/**
+ * @brief Frees the memory allocated for a doubly linked list iterator.
+ *
+ * @param iterator A pointer to the iterator to be freed.
+ */
+void doubly_linked_list_free_iterator(DoublyLinkedListIterator **iterator);
+
+/**
+ * @brief if there are more elements in the doubly linked list to iterate over.
+ *
+ * @param iterator The iterator to check.
+ * @return true if there are more elements, false otherwise.
+ */
+bool doubly_linked_list_iterator_has_next(DoublyLinkedListIterator *iterator);
+
+/**
+ * @brief Moves the iterator to the next element in the doubly linked list.
+ *
+ * @param iterator The iterator to move.
+ */
+void doubly_linked_list_iterator_next(DoublyLinkedListIterator *iterator);
+
+/**
+ * @brief Retrieves the data of the current element in the doubly linked list.
+ *
+ * @param iterator The iterator to get the data from.
+ * @return The data of the current element.
+ */
+NodeData doubly_linked_list_iterator_data(DoublyLinkedListIterator *iterator);

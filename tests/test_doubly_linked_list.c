@@ -118,13 +118,16 @@ bool int_equal(NodeData item1, NodeData item2)
 
 void print_dll_int(DoublyLinkedList *list)
 {
-    Node *current = list->head;
     printf("------------------\n");
-    while (current != NULL)
+    DoublyLinkedListIterator *it = doubly_linked_list_iterator(list);
+    while (doubly_linked_list_iterator_has_next(it))
     {
-        printf("%d\n", *(int *)current->data);
-        current = current->next;
+        NodeData data = doubly_linked_list_iterator_data(it);
+        printf("%d\n", *(int *)data);
+        doubly_linked_list_iterator_next(it);
     }
+
+    doubly_linked_list_free_iterator(&it);
     printf("------------------\n");
 }
 
@@ -241,6 +244,37 @@ Test(doubly_linked_list_insert_after, test_doubly_linked_list_insert_after,
     doubly_linked_list_insert_after(list, r, b);
     cr_assert_eq(list->size, 11, "doubly_linked_list_insert_after() failed");
     cr_assert_eq(r->next->data, b, "doubly_linked_list_insert_after() failed");
+
+    doubly_linked_list_free(&list, true);
+}
+
+Test(doubly_linked_list_iterator, test_doubly_linked_list_iterator,
+     .description = "Test iterating over a doubly linked list.")
+{
+    DoublyLinkedList *list = doubly_linked_list_new();
+
+    for (int i = 0; i < 10; i++)
+    {
+        int *a = malloc(sizeof(int));
+        *a = i;
+
+        doubly_linked_list_append(list, a);
+    }
+
+    DoublyLinkedListIterator *it = doubly_linked_list_iterator(list);
+    cr_assert_not_null(it, "doubly_linked_list_iterator() failed");
+
+    int i = 0;
+    while (doubly_linked_list_iterator_has_next(it))
+    {
+        NodeData data = doubly_linked_list_iterator_data(it);
+        cr_assert_eq(*(int *)data, i, "doubly_linked_list_iterator() failed");
+        doubly_linked_list_iterator_next(it);
+        i++;
+    }
+
+    doubly_linked_list_free_iterator(&it);
+    cr_assert_null(it, "doubly_linked_list_free_iterator() failed");
 
     doubly_linked_list_free(&list, true);
 }

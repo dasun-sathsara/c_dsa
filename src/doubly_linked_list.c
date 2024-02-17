@@ -212,12 +212,14 @@ bool doubly_linked_list_insert_before(DoublyLinkedList *list, Node *node, NodeDa
     }
     new_node->data = data;
 
+    // If the node is the head
     if (list->head == node)
     {
         list->head = new_node;
         new_node->prev = NULL;
         new_node->next = node;
     }
+    // If the node is not the head
     else
     {
         new_node->next = node;
@@ -253,12 +255,14 @@ bool doubly_linked_list_insert_after(DoublyLinkedList *list, Node *node, NodeDat
     }
     new_node->data = data;
 
+    // If the node is the tail
     if (list->tail == node)
     {
         list->tail = new_node;
         new_node->next = NULL;
         new_node->prev = node;
     }
+    // If the node is not the tail
     else
     {
         new_node->prev = node;
@@ -269,4 +273,50 @@ bool doubly_linked_list_insert_after(DoublyLinkedList *list, Node *node, NodeDat
     list->size += 1;
 
     return true;
+}
+
+DoublyLinkedListIterator *doubly_linked_list_iterator(DoublyLinkedList *list)
+{
+    DoublyLinkedListIterator *iterator;
+
+    iterator = malloc(sizeof(DoublyLinkedListIterator));
+
+    if (iterator == NULL)
+    {
+        perror("Failed to allocate memory for new DoublyLinkedListIterator");
+        return iterator;
+    }
+
+    iterator->list = list;
+    iterator->current = list->head;
+
+    return iterator;
+}
+
+void doubly_linked_list_free_iterator(DoublyLinkedListIterator **iterator)
+{
+    free(*iterator);
+    *iterator = NULL;
+}
+
+bool doubly_linked_list_iterator_has_next(DoublyLinkedListIterator *iterator)
+{
+    return iterator->current != NULL;
+}
+
+void doubly_linked_list_iterator_next(DoublyLinkedListIterator *iterator)
+{
+    if (iterator->current != NULL)
+    {
+        iterator->current = iterator->current->next;
+    }
+}
+
+NodeData doubly_linked_list_iterator_data(DoublyLinkedListIterator *iterator)
+{
+    if (iterator->current != NULL)
+    {
+        return iterator->current->data;
+    }
+    return NULL; // or some other default value
 }
