@@ -97,3 +97,24 @@ Node *doubly_linked_list_find(DoublyLinkedList *list, NodeData data, EqualFuncti
  * @return `true` if the node was successfully removed, `false` otherwise.
  */
 bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_data);
+
+/**
+ * @brief Inserts a new node with the given data before the specified node in the doubly linked list.
+ *
+ * @param list The doubly linked list.
+ * @param node The node before which the new node should be inserted.
+ * @param data The data to be stored in the new node.
+ * @return True if the insertion is successful, false otherwise.
+ */
+bool doubly_linked_list_insert_before(DoublyLinkedList *list, Node *node, NodeData data);
+
+/**
+ * @brief Inserts a new node with the given data after the specified node in the doubly linked list.
+ *
+ * @param list The doubly linked list.
+ * @param node The node after which the new node should be inserted.
+ * @param data The data to be stored in the new node.
+ * @return True if the insertion is successful, false otherwise.
+ */
+bool doubly_linked_list_insert_after(DoublyLinkedList *list, Node *node, NodeData data);
+

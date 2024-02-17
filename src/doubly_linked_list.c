@@ -188,3 +188,85 @@ bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_dat
 
     return true;
 }
+
+bool doubly_linked_list_insert_before(DoublyLinkedList *list, Node *node, NodeData data)
+{
+    if (list == NULL)
+    {
+        perror("List is NULL");
+        return false;
+    }
+
+    if (node == NULL)
+    {
+        perror("Node is NULL");
+        return false;
+    }
+
+    Node *new_node = malloc(sizeof(Node));
+
+    if (new_node == NULL)
+    {
+        perror("Failed to allocate memory for new Node");
+        return false;
+    }
+    new_node->data = data;
+
+    if (list->head == node)
+    {
+        list->head = new_node;
+        new_node->prev = NULL;
+        new_node->next = node;
+    }
+    else
+    {
+        new_node->next = node;
+        new_node->prev = node->prev;
+        node->prev->next = new_node;
+    }
+    node->prev = new_node;
+    list->size += 1;
+
+    return true;
+}
+
+bool doubly_linked_list_insert_after(DoublyLinkedList *list, Node *node, NodeData data)
+{
+    if (list == NULL)
+    {
+        perror("List is NULL");
+        return false;
+    }
+
+    if (node == NULL)
+    {
+        perror("Node is NULL");
+        return false;
+    }
+
+    Node *new_node = malloc(sizeof(Node));
+
+    if (new_node == NULL)
+    {
+        perror("Failed to allocate memory for new Node");
+        return false;
+    }
+    new_node->data = data;
+
+    if (list->tail == node)
+    {
+        list->tail = new_node;
+        new_node->next = NULL;
+        new_node->prev = node;
+    }
+    else
+    {
+        new_node->prev = node;
+        new_node->next = node->next;
+        node->next->prev = new_node;
+    }
+    node->next = new_node;
+    list->size += 1;
+
+    return true;
+}
