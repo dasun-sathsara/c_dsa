@@ -1,3 +1,5 @@
+#include "hashing_functions.h"
+
 // Attribution: https://github.com/TheAlgorithms/C
 
 /* String hash function */

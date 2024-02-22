@@ -18,7 +18,7 @@ typedef struct _HashTable HashTable;
 
 typedef unsigned long (*HashFunction)(HashTableKey);
 
-typedef bool (*EqualityFunction)(HashTableKey, HashTableKey);
+typedef bool (*EqualityFunction)(NodeData, NodeData);
 
 /*
 Function pointer type for freeing the data(NodeData) in a node of the doubly linked list. Here, NodeData is a
@@ -41,7 +41,7 @@ struct _HashTable
 
     HashFunction hash_function;
     EqualityFunction equality_function;
-    KeyValuePairFreeFunction key_free_function;
+    KeyValuePairFreeFunction kvp_free_function;
 };
 
 /**
@@ -63,5 +63,33 @@ HashTable *hash_table_new(size_t size, HashFunction hash_function, EqualityFunct
  * @param hash_table The hash table to be freed.
  */
 void hash_table_free(HashTable *hash_table);
+
+/**
+ * @brief Inserts a key-value pair into the hash table.
+ *
+ * @param hash_table The hash table to insert the key-value pair into.
+ * @param key The key to insert.
+ * @param value The value to insert.
+ * @return true if the key-value pair was successfully inserted, false otherwise.
+ */
+bool hash_table_insert(HashTable *hash_table, HashTableKey key, HashTableValue value);
+
+/**
+ * @brief Searches for a value in the hash table based on the given key.
+ *
+ * @param hash_table The hash table to search in.
+ * @param key The key to search for.
+ * @return The value associated with the key, or NULL if the key is not found.
+ */
+HashTableValue hash_table_search(HashTable *hash_table, HashTableKey key);
+
+/**
+ * @brief Removes an element from the hash table with the specified key.
+ *
+ * @param hash_table The hash table from which to remove the element.
+ * @param key The key of the element to be removed.
+ * @return `true` if the element was successfully removed, `false` otherwise.
+ */
+bool hash_table_remove(HashTable *hash_table, HashTableKey key);
 
 #endif // HASH_TABLE_H

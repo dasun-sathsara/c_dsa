@@ -102,7 +102,6 @@ bool doubly_linked_list_append(DoublyLinkedList *list, NodeData data);
  * @param equal_func The function used to compare the data for equality.
  * @return A pointer to the found node, or NULL if the node is not found.
  */
-
 Node *doubly_linked_list_find(DoublyLinkedList *list, NodeData data, EqualFunction equal_func);
 
 /**
