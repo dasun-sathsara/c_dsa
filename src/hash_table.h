@@ -20,9 +20,11 @@ typedef unsigned long (*HashFunction)(HashTableKey);
 
 typedef bool (*EqualityFunction)(HashTableKey, HashTableKey);
 
-typedef void (*HashTableKeyFreeFunction)(HashTableKey);
-
-typedef void (*HashTableValueFreeFunction)(HashTableValue);
+/*
+Function pointer type for freeing the data(NodeData) in a node of the doubly linked list. Here, NodeData is a
+KeyValuePair.
+*/
+typedef void (*KeyValuePairFreeFunction)(NodeData data);
 
 // Structure to represent a key-value pair
 struct _KeyValuePair
@@ -35,12 +37,11 @@ struct _KeyValuePair
 struct _HashTable
 {
     ArrayList *buckets;
-    size_t size;
+    size_t num_of_entries;
 
     HashFunction hash_function;
     EqualityFunction equality_function;
-    HashTableKeyFreeFunction key_free_function;
-    HashTableValueFreeFunction value_free_function;
+    KeyValuePairFreeFunction key_free_function;
 };
 
 /**
@@ -50,8 +51,17 @@ struct _HashTable
  * @param size The number of buckets in the hash table.
  * @param hash_function The hash function to use to hash the keys.
  * @param equality_function The equality function to use to compare keys.
+ * @param kvp_free_function The function to free the key-value pairs in the hash table.
  * @return A pointer to the new hash table.
  */
-HashTable *hash_table_new(size_t size, HashFunction hash_function, EqualityFunction equality_function);
+HashTable *hash_table_new(size_t size, HashFunction hash_function, EqualityFunction equality_function,
+                          KeyValuePairFreeFunction kvp_free_function);
+
+/**
+ * @brief Frees the memory allocated for a hash table.
+ *
+ * @param hash_table The hash table to be freed.
+ */
+void hash_table_free(HashTable *hash_table);
 
 #endif // HASH_TABLE_H

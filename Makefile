@@ -5,10 +5,10 @@ OBJDIR = obj
 BINDIR = tests/bin
 CRITERION = -lcriterion
 # SOURCES = $(wildcard src/*.c)
-SOURCES = src/doubly_linked_list.c
+SOURCES = src/hash_table.c
 OBJECTS = $(SOURCES:src/%.c=$(OBJDIR)/%.o)
 # TEST_SOURCES = $(wildcard tests/*.c)
-TEST_SOURCES = tests/test_doubly_linked_list.c
+TEST_SOURCES = tests/test_hash_table.c
 TESTS = $(TEST_SOURCES:tests/%.c=$(BINDIR)/%)
 
 # Default rule
