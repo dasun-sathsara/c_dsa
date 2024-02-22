@@ -4,7 +4,7 @@
 
 #include "doubly_linked_list.h"
 
-DoublyLinkedList *doubly_linked_list_new()
+DoublyLinkedList *doubly_linked_list_new(FreeNodeDataFunction free_func)
 {
     DoublyLinkedList *new_ddl;
 
@@ -19,33 +19,36 @@ DoublyLinkedList *doubly_linked_list_new()
     new_ddl->size = 0;
     new_ddl->head = NULL;
     new_ddl->tail = NULL;
+    new_ddl->free_func = free_func;
 
     return new_ddl;
 }
 
-void doubly_linked_list_free(DoublyLinkedList **list, bool free_data)
+void doubly_linked_list_free(DoublyLinkedList *list)
 {
-    if (*list == NULL)
+    if (list == NULL)
     {
         return;
     }
 
-    Node *current = (*list)->head;
+    Node *current = list->head;
     Node *next;
 
     while (current != NULL)
     {
         next = current->next;
-        if (free_data)
+
+        // If the free function is not NULL, use it to free the node's data
+        if (list->free_func != NULL)
         {
-            free(current->data);
+            list->free_func(current->data);
         }
+
         free(current);
         current = next;
     }
 
-    free(*list);
-    *list = NULL;
+    free(list);
 }
 
 bool doubly_linked_list_prepend(DoublyLinkedList *list, NodeData data)
@@ -146,7 +149,7 @@ Node *doubly_linked_list_find(DoublyLinkedList *list, NodeData data, EqualFuncti
     return NULL;
 }
 
-bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_data)
+bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node)
 {
     if (list == NULL)
     {
@@ -179,10 +182,12 @@ bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_dat
         node->next->prev = node->prev;
     }
 
-    if (free_data)
+    // If the free function is not NULL, use it to free the node's data
+    if (list->free_func != NULL)
     {
-        free(node->data);
+        list->free_func(node->data);
     }
+
     free(node);
     list->size -= 1;
 
@@ -293,10 +298,9 @@ DoublyLinkedListIterator *doubly_linked_list_iterator(DoublyLinkedList *list)
     return iterator;
 }
 
-void doubly_linked_list_free_iterator(DoublyLinkedListIterator **iterator)
+void doubly_linked_list_free_iterator(DoublyLinkedListIterator *iterator)
 {
-    free(*iterator);
-    *iterator = NULL;
+    free(iterator);
 }
 
 bool doubly_linked_list_iterator_has_next(DoublyLinkedListIterator *iterator)

@@ -40,4 +40,3 @@ HashTable *hash_table_new(size_t size, HashFunction hash_function, EqualityFunct
 
     return new_hash_table;
 }
-

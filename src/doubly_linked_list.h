@@ -10,6 +10,8 @@ typedef struct _DoublyLinkedList DoublyLinkedList;
 typedef struct _DoublyLinkedListIterator DoublyLinkedListIterator;
 typedef struct _Node Node;
 
+typedef void (*FreeNodeDataFunction)(NodeData);
+
 /*
 @brief Struct of a doubly linked list
 */
@@ -18,6 +20,8 @@ struct _DoublyLinkedList
     struct _Node *head;
     struct _Node *tail;
     size_t size;
+
+    FreeNodeDataFunction free_func; // If NodeData is dynamically allocated, this function will be used to free it
 };
 
 /*
@@ -60,17 +64,17 @@ typedef bool (*EqualFunction)(NodeData, NodeData);
 /**
  * @brief Creates a new doubly linked list.
  *
+ * @param free_func The function to free the data of the nodes.
  * @return DoublyLinkedList* A pointer to the new doubly linked list.
  */
-DoublyLinkedList *doubly_linked_list_new();
+DoublyLinkedList *doubly_linked_list_new(FreeNodeDataFunction free_func);
 
 /**
  * @brief Frees the memory of the doubly linked list.
  *
  * @param list The doubly linked list to free.
- * @param free_data A boolean to free the data of the nodes.
  */
-void doubly_linked_list_free(DoublyLinkedList **list, bool free_data);
+void doubly_linked_list_free(DoublyLinkedList *list);
 
 /**
  * @brief Adds a new node to the beginning of the doubly linked list.
@@ -106,10 +110,9 @@ Node *doubly_linked_list_find(DoublyLinkedList *list, NodeData data, EqualFuncti
  *
  * @param list The doubly linked list from which to remove the node.
  * @param node The node to be removed from the list.
- * @param free_data A boolean value indicating whether to free the memory occupied by the removed node's data.
  * @return `true` if the node was successfully removed, `false` otherwise.
  */
-bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node, bool free_data);
+bool doubly_linked_list_remove(DoublyLinkedList *list, Node *node);
 
 /**
  * @brief Inserts a new node with the given data before the specified node in the doubly linked list.
@@ -144,7 +147,7 @@ DoublyLinkedListIterator *doubly_linked_list_iterator(DoublyLinkedList *list);
  *
  * @param iterator A pointer to the iterator to be freed.
  */
-void doubly_linked_list_free_iterator(DoublyLinkedListIterator **iterator);
+void doubly_linked_list_free_iterator(DoublyLinkedListIterator *iterator);
 
 /**
  * @brief if there are more elements in the doubly linked list to iterate over.

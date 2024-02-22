@@ -1,35 +1,41 @@
-CC=gcc
-CFLAGS=-g -Wall -I$(SRC_DIR)
-SRC_DIR=src
-TEST_DIR=tests
-BIN_DIR=bin
-OBJ_DIR=obj
-TEST_BIN_DIR=$(TEST_DIR)/bin
+# Variables
+CC = gcc
+CFLAGS = -g -Wall -Isrc
+OBJDIR = obj
+BINDIR = tests/bin
+CRITERION = -lcriterion
+# SOURCES = $(wildcard src/*.c)
+SOURCES = src/doubly_linked_list.c
+OBJECTS = $(SOURCES:src/%.c=$(OBJDIR)/%.o)
+# TEST_SOURCES = $(wildcard tests/*.c)
+TEST_SOURCES = tests/test_doubly_linked_list.c
+TESTS = $(TEST_SOURCES:tests/%.c=$(BINDIR)/%)
 
-# Create bin and obj directories if they don't exist
-$(shell mkdir -p $(BIN_DIR))
-$(shell mkdir -p $(OBJ_DIR))
-$(shell mkdir -p $(TEST_BIN_DIR))
+# Default rule
+all: $(OBJECTS) $(TESTS)
 
-# Collect all .c files in SRC_DIR and TEST_DIR
-SRC_FILES=$(wildcard $(SRC_DIR)/*.c)
-TEST_FILES=$(wildcard $(TEST_DIR)/*.c)
+# Rule for creating object directory
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-# Replace .c with .o and prepend OBJ_DIR/ to each filename
-OBJ_FILES=$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
+# Rule for creating binary directory
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
-EXECUTABLE=main
-
-all: $(OBJ_FILES)
-	$(CC) $(CFLAGS) -o $(BIN_DIR)/$(EXECUTABLE) $(OBJ_FILES)
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+# Rule for compiling source files into object files
+$(OBJDIR)/%.o: src/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TEST_BIN_DIR)/%: $(TEST_DIR)/%.c $(OBJ_FILES)
-	$(CC) $(CFLAGS) -o $@ $< $(OBJ_FILES)
+# Rule for compiling test cases and linking with the Criterion library
+$(BINDIR)/%: tests/%.c $(OBJECTS) | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $< $(OBJECTS) $(CRITERION)
 
-tests: $(patsubst $(TEST_DIR)/%.c,$(TEST_BIN_DIR)/%,$(TEST_FILES))
+# Custom rule to run a test binary
+test_%: $(BINDIR)/test_%
+	$<
 
+# Rule to clean up the generated files
 clean:
-	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/$(EXECUTABLE) $(TEST_BIN_DIR)/*
+	rm -rf $(OBJDIR)/* $(BINDIR)/*
+
+.PHONY: all clean
