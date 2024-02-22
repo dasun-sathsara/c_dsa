@@ -1,41 +1,55 @@
-# Variables
+# Define the source files
+SOURCES = src/arraylist.c src/doubly_linked_list.c src/hash_table.c src/hashing_functions.c
+
+# Define the test file
+TEST_FILE = tests/test_hash_table.c
+
+# ---------------------------------------------------------------------------
+
+# Define the object directory
+OBJ_DIR = obj
+
+# Define the test binary directory and executable name
+TEST_BIN_DIR = tests/bin
+
+TEST_EXEC = $(TEST_BIN_DIR)/$(notdir $(TEST_FILE:.c=))
+
+# Define the compiler
 CC = gcc
+
+# Define the compiler flags
 CFLAGS = -g -Wall -Isrc
-OBJDIR = obj
-BINDIR = tests/bin
-CRITERION = -lcriterion
-# SOURCES = $(wildcard src/*.c)
-SOURCES = src/hash_table.c
-OBJECTS = $(SOURCES:src/%.c=$(OBJDIR)/%.o)
-# TEST_SOURCES = $(wildcard tests/*.c)
-TEST_SOURCES = tests/test_hash_table.c
-TESTS = $(TEST_SOURCES:tests/%.c=$(BINDIR)/%)
 
-# Default rule
-all: $(OBJECTS) $(TESTS)
+# Convert the .c filenames to .o to give a list of object files to build
+OBJS = $(SOURCES:src/%.c=$(OBJ_DIR)/%.o)
 
-# Rule for creating object directory
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+# Default target
+all: $(OBJS)
 
-# Rule for creating binary directory
-$(BINDIR):
-	mkdir -p $(BINDIR)
+# Rule for creating the object directory
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-# Rule for compiling source files into object files
-$(OBJDIR)/%.o: src/%.c | $(OBJDIR)
+# Rule for converting .c files in SRC to .o files in OBJ_DIR
+$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Rule for compiling test cases and linking with the Criterion library
-$(BINDIR)/%: tests/%.c $(OBJECTS) | $(BINDIR)
-	$(CC) $(CFLAGS) -o $@ $< $(OBJECTS) $(CRITERION)
+# Rule for compiling the test file and linking with the object files
+tests: $(OBJS)
+	mkdir -p $(TEST_BIN_DIR)
+	$(CC) $(CFLAGS) -o $(TEST_EXEC) $(TEST_FILE) $(OBJS) -lcriterion
 
-# Custom rule to run a test binary
-test_%: $(BINDIR)/test_%
-	$<
+# Rule to run the test binary
+runtests: tests
+	./$(TEST_EXEC)
 
-# Rule to clean up the generated files
+# Rule to check for memory leaks
+memcheck: tests
+	valgrind --leak-check=full ./$(TEST_EXEC)
+
+# Additional rules for cleaning up the project
 clean:
-	rm -rf $(OBJDIR)/* $(BINDIR)/*
+	rm -f $(OBJ_DIR)/*.o
+	rm -f $(TEST_BIN_DIR)/*
 
-.PHONY: all clean
+.PHONY: all tests runtests memcheck clean
