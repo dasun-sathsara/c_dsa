@@ -17,7 +17,7 @@ This repository utilizes the **Criterion** framework for unit testing. Below are
 
 To get started, you'll need to install the **Criterion** library. You can find detailed installation instructions [here](https://github.com/Snaipe/Criterion).
 
-### **Running Test Cases**
+### **Manually Running Test Cases**
 
 1. **Compile Source Files**:
     
@@ -43,3 +43,22 @@ To get started, you'll need to install the **Criterion** library. You can find d
     ```bash
     tests/bin/test_arraylist --verbose
     ```
+
+### **Running Test Cases through Make**
+
+**1. Set the Variables**: 
+
+   Set the `SOURCES` and `TEST_FILE` variables in the Makefile to point to your source files and test file respectively.
+
+
+**2. Building the Project:**
+
+   *  `make all`: Compiles all source files into object files.
+
+**3. Executing Tests:**
+
+   * `make tests`: Compiles the test file, links it with object files, and creates the test executable.
+   * `make runtests`: Runs the test executable.
+   * `make memcheck`: Runs the test executable with Valgrind to detect memory leaks.
+
+**Note:** Commands like `make runtests` and `make memcheck` will automatically execute necessary dependencies (e.g., compiling source files if needed). 
