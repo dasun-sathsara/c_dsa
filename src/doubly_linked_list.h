@@ -1,3 +1,6 @@
+#ifndef DOUBLY_LINKED_LIST_H
+#define DOUBLY_LINKED_LIST_H
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -165,3 +168,5 @@ void doubly_linked_list_iterator_next(DoublyLinkedListIterator *iterator);
  * @return The data of the current element.
  */
 NodeData doubly_linked_list_iterator_data(DoublyLinkedListIterator *iterator);
+
+#endif // DOUBLY_LINKED_LIST_H

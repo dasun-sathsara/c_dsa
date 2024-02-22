@@ -8,7 +8,7 @@
 
 #define DEFAULT_ARRAY_CAPACITY 16
 
-ArrayList *arraylist_new(size_t capacity)
+ArrayList *arraylist_new(size_t capacity, ArrayListItemFreeFunc free_func)
 {
     if (capacity == 0)
     {
@@ -26,6 +26,7 @@ ArrayList *arraylist_new(size_t capacity)
     new_arraylist->capacity = capacity;
     new_arraylist->size = 0;
     new_arraylist->items = malloc(capacity * sizeof(ArrayListItem));
+    new_arraylist->free_func = free_func;
 
     if (new_arraylist->items == NULL)
     {
@@ -41,6 +42,16 @@ void arraylist_free(ArrayList *arraylist)
 {
     if (arraylist != NULL)
     {
+
+        // If the free function is not NULL, free the items
+        if (arraylist->free_func != NULL)
+        {
+            for (size_t i = 0; i < arraylist->size; i++)
+            {
+                arraylist->free_func(arraylist->items[i]);
+            }
+        }
+
         free(arraylist->items);
         free(arraylist);
     }
@@ -100,7 +111,7 @@ bool arraylist_prepend(ArrayList *list, ArrayListItem data)
     return arraylist_insert(list, 0, data);
 }
 
-bool arraylist_remove_range(ArrayList *list, size_t start, size_t end, bool should_free)
+bool arraylist_remove_range(ArrayList *list, size_t start, size_t end)
 {
 
     // Check if start and end are out of bounds
@@ -110,16 +121,12 @@ bool arraylist_remove_range(ArrayList *list, size_t start, size_t end, bool shou
         return false;
     }
 
-    // Free the items if should_free is true
-    if (should_free)
+    // Free the items if the free function is not NULL
+    if (list->free_func != NULL)
     {
         for (size_t i = start; i < end; i++)
         {
-            if (list->items[i] != NULL)
-            {
-                free(list->items[i]);
-                list->items[i] = NULL;
-            }
+            list->free_func(list->items[i]);
         }
     }
 
@@ -130,9 +137,9 @@ bool arraylist_remove_range(ArrayList *list, size_t start, size_t end, bool shou
     return true;
 }
 
-bool arraylist_remove(ArrayList *list, size_t index, bool should_free)
+bool arraylist_remove(ArrayList *list, size_t index)
 {
-    return arraylist_remove_range(list, index, index + 1, should_free);
+    return arraylist_remove_range(list, index, index + 1);
 }
 
 ssize_t arraylist_index_of(ArrayList *list, ArrayListEqualFunc cb, ArrayListItem data)

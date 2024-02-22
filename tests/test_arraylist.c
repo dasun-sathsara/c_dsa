@@ -3,10 +3,13 @@
 #include <criterion/criterion.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
+
+#define _GNU_SOURCE
 
 Test(arraylist, test_arraylist_create, .description = "Test creating a new ArrayList")
 {
-    ArrayList *list = arraylist_new(10);
+    ArrayList *list = arraylist_new(10, NULL);
     cr_assert_not_null(list);
     cr_assert_eq(list->size, 0);
     cr_assert_eq(list->capacity, 10);
@@ -15,7 +18,7 @@ Test(arraylist, test_arraylist_create, .description = "Test creating a new Array
 
 Test(arraylist, test_arraylist_append, .description = "Test appending items to an ArrayList")
 {
-    ArrayList *list = arraylist_new(10);
+    ArrayList *list = arraylist_new(10, NULL);
     cr_assert_not_null(list);
     cr_assert_eq(list->size, 0);
     cr_assert_eq(list->capacity, 10);
@@ -38,7 +41,7 @@ Test(arraylist, test_arraylist_append, .description = "Test appending items to a
 
 Test(arraylist, test_arraylist_remove, .description = "Test removing items from an ArrayList")
 {
-    ArrayList *list = arraylist_new(10);
+    ArrayList *list = arraylist_new(10, NULL);
 
     int a = 14;
     int b = 556;
@@ -46,7 +49,7 @@ Test(arraylist, test_arraylist_remove, .description = "Test removing items from 
     arraylist_append(list, &a);
     arraylist_append(list, &b);
 
-    arraylist_remove(list, 0, false);
+    arraylist_remove(list, 0);
     cr_assert_eq(list->size, 1);
     cr_assert_eq(list->capacity, 10);
     cr_assert_eq(*(int *)list->items[0], b);
@@ -54,9 +57,14 @@ Test(arraylist, test_arraylist_remove, .description = "Test removing items from 
     arraylist_free(list);
 }
 
+void free_int(ArrayListItem data)
+{
+    free(data);
+}
+
 Test(arraylist, test_arraylist_remove_heap, .description = "Test removing heap allocated items from an ArrayList")
 {
-    ArrayList *list = arraylist_new(10);
+    ArrayList *list = arraylist_new(10, free_int);
 
     for (int i = 0; i < 10; i++)
     {
@@ -72,13 +80,13 @@ Test(arraylist, test_arraylist_remove_heap, .description = "Test removing heap a
     cr_assert_eq(*(int *)list->items[9], 9);
 
     // Remove a range of items
-    arraylist_remove_range(list, 0, 5, true);
+    arraylist_remove_range(list, 0, 5);
 
     // Assert that first item is 5
     cr_assert_eq(*(int *)list->items[0], 5);
 
     // Remove last item
-    arraylist_remove(list, list->size - 1, true);
+    arraylist_remove(list, list->size - 1);
 
     // Assert that last item is 8
     cr_assert_eq(*(int *)list->items[list->size - 1], 8);
@@ -96,7 +104,7 @@ bool int_equal(ArrayListItem item1, ArrayListItem item2)
 
 Test(arraylist, test_arraylist_index_of, .description = "Test finding the index of an item in an ArrayList")
 {
-    ArrayList *list = arraylist_new(10);
+    ArrayList *list = arraylist_new(10, NULL);
 
     int a = 654;
     int b = 536;
@@ -120,7 +128,7 @@ int int_compare(ArrayListItem item1, ArrayListItem item2)
 
 Test(arraylist, test_arraylist_sort, .description = "Test sorting an ArrayList")
 {
-    ArrayList *list = arraylist_new(10);
+    ArrayList *list = arraylist_new(10, NULL);
 
     int c = 1;
     int a = 2;
@@ -153,6 +161,48 @@ Test(arraylist, test_arraylist_sort, .description = "Test sorting an ArrayList")
     cr_assert_eq(*(int *)list->items[6], f);
     cr_assert_eq(*(int *)list->items[7], e);
     cr_assert_eq(*(int *)list->items[8], g);
+
+    arraylist_free(list);
+}
+
+// Test the ArrayList for storing pointers to structures
+typedef struct
+{
+    int id;
+    char *name;
+} TestStruct;
+
+void free_test_struct(ArrayListItem data)
+{
+    TestStruct *test_struct = (TestStruct *)data;
+    free(test_struct->name);
+    free(test_struct);
+}
+
+Test(arraylist, test_arraylist_struct, .description = "Test using the ArrayList to store pointers to structures")
+{
+    ArrayList *list = arraylist_new(10, NULL);
+
+    TestStruct *a = malloc(sizeof(TestStruct));
+    a->id = 1;
+
+    a->name = malloc(8);
+    strcpy(a->name, "Test A");
+
+    TestStruct *b = malloc(sizeof(TestStruct));
+    b->id = 2;
+
+    b->name = malloc(8);
+    strcpy(b->name, "Test B");
+
+    arraylist_append(list, a);
+    arraylist_append(list, b);
+
+    cr_assert_eq(((TestStruct *)list->items[0])->id, 1);
+    cr_assert_str_eq(((TestStruct *)list->items[0])->name, "Test A");
+
+    cr_assert_eq(((TestStruct *)list->items[1])->id, 2);
+    cr_assert_str_eq(((TestStruct *)list->items[1])->name, "Test B");
 
     arraylist_free(list);
 }

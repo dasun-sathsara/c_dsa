@@ -1,3 +1,6 @@
+#ifndef ARRAYLIST_H
+#define ARRAYLIST_H
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -24,6 +27,8 @@ typedef int (*ArrayListCompareFunc)(ArrayListItem value1, ArrayListItem value2);
  */
 typedef bool (*ArrayListEqualFunc)(ArrayListItem value1, ArrayListItem value2);
 
+typedef void (*ArrayListItemFreeFunc)(ArrayListItem data);
+
 /**
  * @brief Structure representing an ArrayList.
  */
@@ -32,15 +37,18 @@ struct _ArrayList
     ArrayListItem *items; // Array of items
     size_t size;          // Number of items in the list
     size_t capacity;      // Maximum number of items the list can hold
+
+    ArrayListItemFreeFunc free_func; // Function to free dynamically allocated items
 };
 
 /**
  * @brief Creates a new ArrayList with the specified capacity.
  *
  * @param capacity The initial capacity of the ArrayList.
+ * @param free_func The function to free an item that is dynamically allocated.
  * @return ArrayList* Returns a pointer to the newly created ArrayList.
  */
-ArrayList *arraylist_new(size_t capacity);
+ArrayList *arraylist_new(size_t capacity, ArrayListItemFreeFunc free_func);
 
 /**
  * @brief Frees the memory occupied by the ArrayList.
@@ -83,20 +91,18 @@ bool arraylist_append(ArrayList *list, ArrayListItem data);
  * @param list The ArrayList from which to remove the items.
  * @param start The starting index of the range to be removed.
  * @param end The ending index of the range to be removed.
- * @param should_free A boolean indicating whether the removed items should be freed.
  * @return bool Returns true if the items are successfully removed, false otherwise.
  */
-bool arraylist_remove_range(ArrayList *list, size_t start, size_t end, bool should_free);
+bool arraylist_remove_range(ArrayList *list, size_t start, size_t end);
 
 /**
  * @brief Removes an item at the specified index from the ArrayList.
  *
  * @param list The ArrayList from which to remove the item.
  * @param index The index of the item to be removed.
- * @param should_free A boolean indicating whether the removed item should be freed.
  * @return bool Returns true if the item is successfully removed, false otherwise.
  */
-bool arraylist_remove(ArrayList *list, size_t index, bool should_free);
+bool arraylist_remove(ArrayList *list, size_t index);
 
 /**
  * @brief Returns the index of the first occurrence of the specified item in the ArrayList.
@@ -125,3 +131,5 @@ void arraylist_clear(ArrayList *list);
  * @param compare_func The compare function used for sorting.
  */
 void arraylist_sort(ArrayList *list, ArrayListCompareFunc compare_func);
+
+#endif // ARRAYLIST_H
