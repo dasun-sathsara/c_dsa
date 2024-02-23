@@ -124,3 +124,37 @@ HashTableValue hash_table_search(HashTable *hash_table, HashTableKey key)
     // Access the value of the key-value pair through the node data
     return ((KeyValuePair *)r->data)->value;
 }
+
+bool hash_table_remove(HashTable *hash_table, HashTableKey key)
+{
+    
+    if (hash_table == NULL)
+    {
+        return false;
+    }
+
+    size_t index = hash_table->hash_function(key) % hash_table->buckets->capacity;
+
+    DoublyLinkedList *bucket = hash_table->buckets->items[index];
+
+    // Construct a KeyValuePair with the key to search for
+    KeyValuePair kvp;
+    kvp.key = key;
+
+    // Search for a node with the specified key in doubly linked list
+    Node *r = doubly_linked_list_find(bucket, &kvp, hash_table->equality_function);
+
+    if (r == NULL)
+    {
+        return false;
+    }
+
+    if (doubly_linked_list_remove(bucket, r) == false)
+    {
+        return false;
+    }
+
+    hash_table->num_of_entries--;
+
+    return true;
+}

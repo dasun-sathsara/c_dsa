@@ -119,3 +119,30 @@ Test(hash_table, test_hash_table_insert_large, .description = "Test insertion of
 
     hash_table_free(hash_table);
 }
+
+Test(hash_table, test_hash_table_remove, .description = "Test removing a key-value pair from the hash table")
+{
+    HashTable *hash_table = hash_table_new(10, string_hash, string_equal, f_string_int);
+    cr_assert_not_null(hash_table, "hash_table_new() failed");
+
+    for (size_t i = 0; i < 100; i++)
+    {
+        // random string for key
+        char *key = malloc(10);
+        sprintf(key, "%ldkey", i);
+
+        int *value = malloc(sizeof(int));
+        *value = i * 2;
+        hash_table_insert(hash_table, key, value);
+    }
+
+    int *rv = hash_table_search(hash_table, "99key");
+    cr_assert_not_null(rv, "hash_table_search() failed");
+
+    cr_assert(hash_table_remove(hash_table, "99key"), "hash_table_remove() failed");
+
+    rv = hash_table_search(hash_table, "99key");
+    cr_assert_null(rv, "hash_table_search() failed");
+
+    hash_table_free(hash_table);
+}
