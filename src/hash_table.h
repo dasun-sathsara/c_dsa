@@ -20,6 +20,8 @@ typedef unsigned long (*HashFunction)(HashTableKey);
 
 typedef bool (*EqualityFunction)(NodeData, NodeData);
 
+typedef struct _HashTableIterator HashTableIterator;
+
 /*
 Function pointer type for freeing the data(NodeData) in a node of the doubly linked list. Here, NodeData is a
 KeyValuePair.
@@ -37,11 +39,19 @@ struct _KeyValuePair
 struct _HashTable
 {
     ArrayList *buckets;
-    size_t num_of_entries;
+    ssize_t num_of_entries;
 
     HashFunction hash_function;
     EqualityFunction equality_function;
     KeyValuePairFreeFunction kvp_free_function;
+};
+
+// Structure to represent an iterator for a hash table
+struct _HashTableIterator
+{
+    HashTable *hash_table;
+    size_t bucket_index;
+    Node *current_node;
 };
 
 /**
@@ -91,5 +101,43 @@ HashTableValue hash_table_search(HashTable *hash_table, HashTableKey key);
  * @return `true` if the element was successfully removed, `false` otherwise.
  */
 bool hash_table_remove(HashTable *hash_table, HashTableKey key);
+
+/**
+ * @brief Creates a new iterator for the given hash table.
+ *
+ * @param hash_table The hash table to create an iterator for.
+ * @return A pointer to the newly created HashTableIterator.
+ */
+HashTableIterator *hash_table_iterator_new(HashTable *hash_table);
+
+/**
+ * @brief Checks if there are more elements to iterate over in the hash table.
+ *
+ * @param iterator The hash table iterator.
+ * @return `true` if there are more elements to iterate over, `false` otherwise.
+ */
+bool hash_table_iterator_has_next(HashTableIterator *iterator);
+
+/**
+ * @brief Advances the iterator to the next element in the hash table.
+ *
+ * @param iterator The iterator to be advanced.
+ */
+void hash_table_iterator_next(HashTableIterator *iterator);
+
+/**
+ * @brief Retrieves the key-value pair pointed to by the iterator.
+ *
+ * @param iterator The iterator to retrieve the key-value pair from.
+ * @return The key-value pair pointed to by the iterator.
+ */
+KeyValuePair *hash_table_iterator_get(HashTableIterator *iterator);
+
+/**
+ * @brief Frees the memory allocated for a hash table iterator.
+ *
+ * @param iterator A pointer to the iterator to be freed.
+ */
+void hash_table_iterator_free(HashTableIterator *iterator);
 
 #endif // HASH_TABLE_H

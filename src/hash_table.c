@@ -127,7 +127,7 @@ HashTableValue hash_table_search(HashTable *hash_table, HashTableKey key)
 
 bool hash_table_remove(HashTable *hash_table, HashTableKey key)
 {
-    
+
     if (hash_table == NULL)
     {
         return false;
@@ -157,4 +157,95 @@ bool hash_table_remove(HashTable *hash_table, HashTableKey key)
     hash_table->num_of_entries--;
 
     return true;
+}
+
+HashTableIterator *hash_table_iterator_new(HashTable *hash_table)
+{
+    if (hash_table == NULL)
+    {
+        return NULL;
+    }
+
+    HashTableIterator *new_iterator = malloc(sizeof(HashTableIterator));
+
+    if (new_iterator == NULL)
+    {
+        perror("Failed to allocate memory for new HashTableIterator");
+        return NULL;
+    }
+
+    new_iterator->bucket_index = -1;
+    new_iterator->current_node = NULL;
+    new_iterator->hash_table = hash_table;
+
+    return new_iterator;
+}
+
+bool hash_table_iterator_has_next(HashTableIterator *iterator)
+{
+    if (iterator == NULL)
+    {
+        return false;
+    }
+
+    if (iterator->current_node != NULL && iterator->current_node->next != NULL)
+    {
+        return true;
+    }
+    else
+    {
+        for (size_t i = iterator->bucket_index + 1; i < iterator->hash_table->buckets->capacity; i++)
+        {
+            DoublyLinkedList *bucket = iterator->hash_table->buckets->items[i];
+            if (bucket->head != NULL)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void hash_table_iterator_next(HashTableIterator *iterator)
+{
+    if (iterator == NULL)
+    {
+        return;
+    }
+
+    if (iterator->current_node != NULL && iterator->current_node->next != NULL)
+    {
+        iterator->current_node = iterator->current_node->next;
+        return;
+    }
+    else
+    {
+        for (size_t i = iterator->bucket_index + 1; i < iterator->hash_table->buckets->capacity; i++)
+        {
+            DoublyLinkedList *bucket = iterator->hash_table->buckets->items[i];
+            if (bucket->head != NULL)
+            {
+                iterator->bucket_index = i;
+                iterator->current_node = bucket->head;
+                return;
+            }
+        }
+    }
+}
+
+KeyValuePair *hash_table_iterator_get(HashTableIterator *iterator)
+{
+
+    if (iterator == NULL)
+    {
+        return NULL;
+    }
+
+    return iterator->current_node->data;
+}
+
+void hash_table_iterator_free(HashTableIterator *iterator)
+{
+    free(iterator);
 }

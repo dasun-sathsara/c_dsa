@@ -122,7 +122,7 @@ Test(hash_table, test_hash_table_insert_large, .description = "Test insertion of
 
 Test(hash_table, test_hash_table_remove, .description = "Test removing a key-value pair from the hash table")
 {
-    HashTable *hash_table = hash_table_new(10, string_hash, string_equal, f_string_int);
+    HashTable *hash_table = hash_table_new(100, string_hash, string_equal, f_string_int);
     cr_assert_not_null(hash_table, "hash_table_new() failed");
 
     for (size_t i = 0; i < 100; i++)
@@ -144,5 +144,46 @@ Test(hash_table, test_hash_table_remove, .description = "Test removing a key-val
     rv = hash_table_search(hash_table, "99key");
     cr_assert_null(rv, "hash_table_search() failed");
 
+    hash_table_free(hash_table);
+}
+
+void print_hash_table_entry(KeyValuePair *kvp)
+{
+
+    printf("(%s, %d)\n", (char *)kvp->key, *(int *)kvp->value);
+}
+
+Test(hash_table, hash_table_iterator, .description = "Test the hash table iterator")
+{
+    HashTable *hash_table = hash_table_new(25, string_hash, string_equal, f_string_int);
+    cr_assert_not_null(hash_table, "hash_table_new() failed");
+
+    for (size_t i = 0; i < 25; i++)
+    {
+        // random string for key
+        char *key = malloc(10);
+        sprintf(key, "key%ld", i);
+
+        int *value = malloc(sizeof(int));
+        *value = i * 2;
+        hash_table_insert(hash_table, key, value);
+    }
+
+    HashTableIterator *iterator = hash_table_iterator_new(hash_table);
+    cr_assert_not_null(iterator, "hash_table_iterator_new() failed");
+    cr_assert_eq(iterator->bucket_index, -1, "hash_table_iterator_new() failed");
+
+    size_t i = 0;
+    while (hash_table_iterator_has_next(iterator) == true)
+    {
+        hash_table_iterator_next(iterator);
+        KeyValuePair *kvp = hash_table_iterator_get(iterator);
+        cr_assert_not_null(kvp, "hash_table_iterator_get() failed");
+        i++;
+    }
+
+    cr_assert_eq(i, 25, "hash_table_iterator_has_next() failed");
+
+    hash_table_iterator_free(iterator);
     hash_table_free(hash_table);
 }
